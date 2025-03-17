@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>即時資訊看板</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #f8f8f8;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: auto;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+
+        .info-box {
+            font-size: 20px;
+            margin: 15px 0;
+            padding: 10px;
+            background: #e3f2fd;
+            border-radius: 5px;
+        }
+
+        @media (max-width: 500px) {
+            .container {
+                padding: 15px;
+            }
+            h1 {
+                font-size: 20px;
+            }
+            .info-box {
+                font-size: 18px;
+                padding: 8px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>📅 即時資訊看板</h1>
+    <div class="info-box">🕒 現在時間：<span id="currentTime">加載中...</span></div>
+    <div class="info-box">📅 今天日期：<span id="currentDate">加載中...</span></div>
+    <div class="info-box">🎉 今日節日：<span id="holiday">查詢中...</span></div>
+    <div class="info-box">🌦 天氣狀況：<span id="weather">載入中...</span></div>
+</div>
+
+<script>
+    function updateTime() {
+        const now = new Date();
+        document.getElementById("currentTime").textContent = now.toLocaleTimeString("zh-TW");
+        document.getElementById("currentDate").textContent = now.toLocaleDateString("zh-TW", { year: "numeric", month: "long", day: "numeric", weekday: "long" });
+    }
+
+    function checkHoliday() {
+        const holidays = {
+            "1-1": "元旦",
+            "2-28": "和平紀念日",
+            "4-4": "兒童節",
+            "4-5": "清明節",
+            "5-1": "勞動節",
+            "10-10": "雙十節",
+            "12-25": "聖誕節"
+        };
+
+        const today = new Date();
+        const key = (today.getMonth() + 1) + "-" + today.getDate();
+        document.getElementById("holiday").textContent = holidays[key] || "今天沒有特殊節日 🎉";
+    }
+
+    async function fetchWeather() {
+        const API_KEY = "ffb1e1f3e82292eb14f68515a6e9b7d6"; 
+        const CITY = "Taipei"; 
+        const url = `https://api.openweathermap.org/data/2.5/weather?q=${CITY}&appid=${API_KEY}&lang=zh_tw&units=metric`;
+
+        try {
+            const response = await fetch(url);
+            const data = await response.json();
+            if (response.ok) {
+                const weatherDesc = data.weather[0].description;
+                const temp = data.main.temp;
+                document.getElementById("weather").textContent = `${weatherDesc}，🌡 ${temp}°C`;
+            } else {
+                document.getElementById("weather").textContent = "無法獲取天氣資訊";
+            }
+        } catch (error) {
+            document.getElementById("weather").textContent = "天氣資訊載入失敗";
+        }
+    }
+
+    updateTime();
+    checkHoliday();
+    fetchWeather();
+    setInterval(updateTime, 1000);
+</script>
+
+</body>
+</html>
