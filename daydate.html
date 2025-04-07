@@ -1,111 +1,211 @@
 <!DOCTYPE html>
-<html lang="zh-TW">
+<html lang="zh-Hant">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>即時資訊看板</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            text-align: center;
-            background-color: #f8f8f8;
-            padding: 20px;
-        }
-
-        .container {
-            max-width: 600px;
-            margin: auto;
-            background: white;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
-        }
-
-        h1 {
-            font-size: 24px;
-            margin-bottom: 10px;
-        }
-
-        .info-box {
-            font-size: 20px;
-            margin: 15px 0;
-            padding: 10px;
-            background: #e3f2fd;
-            border-radius: 5px;
-        }
-
-        @media (max-width: 500px) {
-            .container {
-                padding: 15px;
-            }
-            h1 {
-                font-size: 20px;
-            }
-            .info-box {
-                font-size: 18px;
-                padding: 8px;
-            }
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>影像檔案上傳</title>
+  <!-- 載入 Bootstrap 4 CSS -->
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <style>
+    body {
+      background-color: #f8f9fa;
+      transition: background-color 0.3s, color 0.3s;
+    }
+    .upload-container {
+      max-width: 500px;
+      margin: 50px auto;
+      background-color: #fff;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      transition: background-color 0.3s, box-shadow 0.3s;
+    }
+    .upload-container h2 {
+      margin-bottom: 20px;
+      text-align: center;
+    }
+    #image-preview {
+      display: none;
+      margin-top: 20px;
+      max-width: 100%;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+    }
+    #image-details {
+      margin-top: 20px;
+      padding: 10px;
+      background-color: #f1f1f1;
+      border-radius: 5px;
+      font-size: 14px;
+    }
+    #upload-button {
+      margin-top: 20px;
+    }
+    /* 限制檔案輸入標籤內文字長度 */
+    .custom-file-label {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    #file-name {
+      display: inline-block;
+      max-width: 100%;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    /* 夜間模式樣式 */
+    .dark-mode {
+      background-color: #2b1219;
+      color: #f8f9fa;
+    }
+    .dark-mode .upload-container {
+      background-color: #32373b;
+      box-shadow: none;
+    }
+    .dark-mode .custom-file-label {
+      background-color: #6c757d;
+      color: #fff;
+    }
+    .dark-mode .btn-primary {
+      background-color: #007bff;
+      border-color: #007bff;
+    }
+    .dark-mode #image-details {
+      background-color: #6c757d;
+      color: #fff;
+    }
+    @media (max-width: 576px) {
+      .upload-container {
+        margin: 20px;
+        padding: 20px;
+      }
+    }
+  </style>
 </head>
 <body>
+  <div class="container">
+    <div class="upload-container">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2 class="mb-0">上傳影像檔案</h2>
+        <div class="custom-control custom-switch">
+          <input type="checkbox" class="custom-control-input" id="themeSwitch">
+          <label class="custom-control-label" for="themeSwitch">夜間模式</label>
+        </div>
+      </div>
+      <div class="custom-file mb-3">
+        <input type="file" class="custom-file-input" id="file-input" accept="image/*">
+        <label class="custom-file-label" for="file-input">選擇檔案</label>
+      </div>
+      <p>選取的檔案: <span id="file-name">尚未選取檔案</span></p>
+      <img id="image-preview" src="#" alt="預覽圖像">
+      <div id="image-details" style="display: none;"></div>
+      <button id="upload-button" class="btn btn-primary btn-block" disabled>上傳檔案</button>
+    </div>
+  </div>
 
-<div class="container">
-    <h1>📅 即時資訊看板</h1>
-    <div class="info-box">🕒 現在時間：<span id="currentTime">加載中...</span></div>
-    <div class="info-box">📅 今天日期：<span id="currentDate">加載中...</span></div>
-    <div class="info-box">🎉 今日節日：<span id="holiday">查詢中...</span></div>
-    <div class="info-box">🌦 天氣狀況：<span id="weather">載入中...</span></div>
-</div>
+  <!-- 載入 jQuery 與 Bootstrap JS -->
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    const fileInput = document.getElementById('file-input');
+    const fileNameDisplay = document.getElementById('file-name');
+    const uploadButton = document.getElementById('upload-button');
+    const imagePreview = document.getElementById('image-preview');
+    const imageDetails = document.getElementById('image-details');
+    const themeSwitch = document.getElementById('themeSwitch');
 
-<script>
-    function updateTime() {
-        const now = new Date();
-        document.getElementById("currentTime").textContent = now.toLocaleTimeString("zh-TW");
-        document.getElementById("currentDate").textContent = now.toLocaleDateString("zh-TW", { year: "numeric", month: "long", day: "numeric", weekday: "long" });
+    // 預設開啟夜間模式：加入 dark-mode 並設定切換開關為勾選狀態
+    document.body.classList.add('dark-mode');
+    themeSwitch.checked = true;
+
+    themeSwitch.addEventListener('change', function() {
+      document.body.classList.toggle('dark-mode', this.checked);
+    });
+
+    function updateImageDetails(file, imgWidth, imgHeight) {
+      const fileSizeKB = (file.size / 1024).toFixed(2);
+      const fileSizeMB = (file.size / (1024 * 1024)).toFixed(2);
+      imageDetails.innerHTML = `
+        <strong>檔案名稱：</strong> ${file.name} <br>
+        <strong>檔案類型：</strong> ${file.type} <br>
+        <strong>檔案大小：</strong> ${fileSizeKB} KB (${fileSizeMB} MB) <br>
+        <strong>影像尺寸：</strong> ${imgWidth} x ${imgHeight} px
+      `;
+      imageDetails.style.display = 'block';
     }
 
-    function checkHoliday() {
-        const holidays = {
-            "1-1": "元旦",
-            "2-28": "和平紀念日",
-            "4-4": "兒童節",
-            "4-5": "清明節",
-            "5-1": "勞動節",
-            "10-10": "雙十節",
-            "12-25": "聖誕節"
-        };
+    fileInput.addEventListener('change', function(e) {
+      const file = e.target.files[0];
+      const maxSize = 5 * 1024 * 1024; // 5MB
+      
+      if (file && file.size > maxSize) {
+        alert("檔案大小超過 5MB，不允許上傳！");
+        fileInput.value = "";
+        fileNameDisplay.textContent = "尚未選取檔案";
+        fileInput.nextElementSibling.innerText = "選擇檔案";
+        uploadButton.disabled = true;
+        imagePreview.style.display = 'none';
+        imageDetails.style.display = 'none';
+        return;
+      }
 
-        const today = new Date();
-        const key = (today.getMonth() + 1) + "-" + today.getDate();
-        document.getElementById("holiday").textContent = holidays[key] || "今天沒有特殊節日 🎉";
-    }
-
-    async function fetchWeather() {
-        const API_KEY = "ffb1e1f3e82292eb14f68515a6e9b7d6"; 
-        const CITY = "Taipei"; 
-        const url = `https://api.openweathermap.org/data/2.5/weather?q=${CITY}&appid=${API_KEY}&lang=zh_tw&units=metric`;
-
-        try {
-            const response = await fetch(url);
-            const data = await response.json();
-            if (response.ok) {
-                const weatherDesc = data.weather[0].description;
-                const temp = data.main.temp;
-                document.getElementById("weather").textContent = `${weatherDesc}，🌡 ${temp}°C`;
-            } else {
-                document.getElementById("weather").textContent = "無法獲取天氣資訊";
-            }
-        } catch (error) {
-            document.getElementById("weather").textContent = "天氣資訊載入失敗";
+      if (file) {
+        fileNameDisplay.textContent = file.name;
+        fileInput.nextElementSibling.innerText = file.name;
+        uploadButton.disabled = false;
+        
+        if (file.type.startsWith('image/')) {
+          const reader = new FileReader();
+          reader.onload = function(event) {
+            imagePreview.src = event.target.result;
+            imagePreview.style.display = 'block';
+            const img = new Image();
+            img.onload = function() {
+              updateImageDetails(file, img.width, img.height);
+            };
+            img.src = event.target.result;
+          };
+          reader.readAsDataURL(file);
+        } else {
+          imagePreview.style.display = 'none';
+          imageDetails.style.display = 'none';
         }
-    }
+      } else {
+        fileNameDisplay.textContent = '尚未選取檔案';
+        fileInput.nextElementSibling.innerText = '選擇檔案';
+        uploadButton.disabled = true;
+        imagePreview.style.display = 'none';
+        imageDetails.style.display = 'none';
+      }
+    });
 
-    updateTime();
-    checkHoliday();
-    fetchWeather();
-    setInterval(updateTime, 1000);
-</script>
+    uploadButton.addEventListener('click', function() {
+      const file = fileInput.files[0];
+      if (!file) {
+        alert("請選擇檔案");
+        return;
+      }
+      const formData = new FormData();
+      formData.append('file', file);
 
+      fetch('/upload', {
+        method: 'POST',
+        body: formData,
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          alert("檔案上傳成功！");
+        } else {
+          alert("檔案上傳失敗！");
+        }
+      })
+      .catch(error => {
+        console.error("上傳時發生錯誤：", error);
+        alert("上傳時發生錯誤！");
+      });
+    });
+  </script>
 </body>
 </html>
