@@ -47,12 +47,13 @@
       overflow: hidden;
       text-overflow: ellipsis;
     }
+    /* 更改為 div 並使其換行 */
     #file-name {
-      display: inline-block;
+      display: block;
       max-width: 100%;
-      white-space: nowrap;
+      white-space: normal; /* 允許換行 */
       overflow: hidden;
-      text-overflow: ellipsis;
+      word-wrap: break-word; /* 在必要的地方換行 */
     }
     /* 夜間模式樣式 */
     .dark-mode {
@@ -97,7 +98,9 @@
         <input type="file" class="custom-file-input" id="file-input" accept="image/*">
         <label class="custom-file-label" for="file-input">選擇檔案</label>
       </div>
-      <p>選取的檔案: <span id="file-name">尚未選取檔案</span></p>
+      <p>選取的檔案:</p>
+      <!-- 使用 div 來顯示檔案名稱並且允許換行 -->
+      <div id="file-name">尚未選取檔案</div>
       <img id="image-preview" src="#" alt="預覽圖像">
       <div id="image-details" style="display: none;"></div>
       <button id="upload-button" class="btn btn-primary btn-block" disabled>上傳檔案</button>
@@ -114,10 +117,6 @@
     const imagePreview = document.getElementById('image-preview');
     const imageDetails = document.getElementById('image-details');
     const themeSwitch = document.getElementById('themeSwitch');
-
-    // 預設開啟夜間模式：加入 dark-mode 並設定切換開關為勾選狀態
-    document.body.classList.add('dark-mode');
-    themeSwitch.checked = true;
 
     themeSwitch.addEventListener('change', function() {
       document.body.classList.toggle('dark-mode', this.checked);
