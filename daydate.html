@@ -51,9 +51,9 @@
     #file-name {
       display: block;
       max-width: 100%;
-      white-space: normal; /* 允許換行 */
+      white-space: normal;
       overflow: hidden;
-      word-wrap: break-word; /* 在必要的地方換行 */
+      word-wrap: break-word;
     }
     /* 夜間模式樣式 */
     .dark-mode {
@@ -91,7 +91,8 @@
         <h2 class="mb-0">上傳影像檔案</h2>
         <div class="custom-control custom-switch">
           <input type="checkbox" class="custom-control-input" id="themeSwitch">
-          <label class="custom-control-label" for="themeSwitch">夜間模式</label>
+          <!-- 這裡顯示月亮或太陽的 emoji -->
+          <label class="custom-control-label" for="themeSwitch" id="themeLabel">🌙</label>
         </div>
       </div>
       <div class="custom-file mb-3">
@@ -99,7 +100,6 @@
         <label class="custom-file-label" for="file-input">選擇檔案</label>
       </div>
       <p>選取的檔案:</p>
-      <!-- 使用 div 來顯示檔案名稱並且允許換行 -->
       <div id="file-name">尚未選取檔案</div>
       <img id="image-preview" src="#" alt="預覽圖像">
       <div id="image-details" style="display: none;"></div>
@@ -117,16 +117,22 @@
     const imagePreview = document.getElementById('image-preview');
     const imageDetails = document.getElementById('image-details');
     const themeSwitch = document.getElementById('themeSwitch');
+    const themeLabel = document.getElementById('themeLabel');
+
+    // 預設開啟夜間模式：加入 dark-mode 並設定切換開關為勾選狀態
+    document.body.classList.add('dark-mode');
+    themeSwitch.checked = true;
+    themeLabel.textContent = '🌙'; // 預設顯示月亮
 
     themeSwitch.addEventListener('change', function() {
       document.body.classList.toggle('dark-mode', this.checked);
+      themeLabel.textContent = this.checked ? '🌙' : '🌞'; // 切換月亮與太陽的 emoji
     });
 
     function updateImageDetails(file, imgWidth, imgHeight) {
       const fileSizeKB = (file.size / 1024).toFixed(2);
       const fileSizeMB = (file.size / (1024 * 1024)).toFixed(2);
       imageDetails.innerHTML = `
-        <strong>檔案名稱：</strong> ${file.name} <br>
         <strong>檔案類型：</strong> ${file.type} <br>
         <strong>檔案大小：</strong> ${fileSizeKB} KB (${fileSizeMB} MB) <br>
         <strong>影像尺寸：</strong> ${imgWidth} x ${imgHeight} px
