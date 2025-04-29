@@ -1,216 +1,124 @@
 <!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>影像檔案上傳</title>
-  <!-- 載入 Bootstrap 4 CSS -->
-  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-  <style>
-    body {
-      background-color: #f8f9fa;
-      transition: background-color 0.3s, color 0.3s;
-    }
-    .upload-container {
-      max-width: 500px;
-      margin: 50px auto;
-      background-color: #fff;
-      padding: 30px;
-      border-radius: 10px;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-      transition: background-color 0.3s, box-shadow 0.3s;
-    }
-    .upload-container h2 {
-      margin-bottom: 20px;
-      text-align: center;
-    }
-    #image-preview {
-      display: none;
-      margin-top: 20px;
-      max-width: 100%;
-      border: 1px solid #ddd;
-      border-radius: 5px;
-    }
-    #image-details {
-      margin-top: 20px;
-      padding: 10px;
-      background-color: #f1f1f1;
-      border-radius: 5px;
-      font-size: 14px;
-    }
-    #upload-button {
-      margin-top: 20px;
-    }
-    /* 限制檔案輸入標籤內文字長度 */
-    .custom-file-label {
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-    /* 更改為 div 並使其換行 */
-    #file-name {
-      display: block;
-      max-width: 100%;
-      white-space: normal;
-      overflow: hidden;
-      word-wrap: break-word;
-    }
-    /* 夜間模式樣式 */
-    .dark-mode {
-      background-color: #2b1219;
-      color: #f8f9fa;
-    }
-    .dark-mode .upload-container {
-      background-color: #32373b;
-      box-shadow: none;
-    }
-    .dark-mode .custom-file-label {
-      background-color: #6c757d;
-      color: #fff;
-    }
-    .dark-mode .btn-primary {
-      background-color: #007bff;
-      border-color: #007bff;
-    }
-    .dark-mode #image-details {
-      background-color: #6c757d;
-      color: #fff;
-    }
-    @media (max-width: 576px) {
-      .upload-container {
-        margin: 20px;
-        padding: 20px;
-      }
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>多圖上傳與資訊預覽</title>
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+<style>
+  body{background:#f8f9fa;transition:.3s}
+  .upload-container{max-width:500px;margin:50px auto;padding:30px;border-radius:10px;
+    background:#fff;box-shadow:0 2px 10px rgba(0,0,0,.1);transition:.3s}
+  #image-previews{display:flex;flex-direction:column;margin-top:20px}
+  .preview-wrap{width:100%;display:flex;align-items:center;padding:8px 10px;margin-bottom:12px;
+    border:1px solid #ddd;border-radius:6px;background:#fafafa}
+  .preview-wrap img{max-width:100px;max-height:80px;margin-right:12px;border-radius:4px}
+  .preview-info{font-size:.8rem;word-break:break-all}
+  .custom-file-label{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .dark-mode{background:#2b1219;color:#f8f9fa}
+  .dark-mode .upload-container{background:#32373b;box-shadow:none}
+  .dark-mode .custom-file-label{background:#6c757d;color:#fff}
+  .dark-mode .btn-primary{background:#007bff;border-color:#007bff}
+  .dark-mode .preview-wrap{background:#3c4044;border-color:#555}
+  @media(max-width:576px){.upload-container{margin:20px;padding:20px}}
+</style>
 </head>
-<body>
-  <div class="container">
-    <div class="upload-container">
-      <div class="d-flex justify-content-between align-items-center mb-3">
-        <h2 class="mb-0">上傳影像檔案</h2>
-        <div class="custom-control custom-switch">
-          <input type="checkbox" class="custom-control-input" id="themeSwitch">
-          <!-- 這裡顯示月亮或太陽的 emoji -->
-          <label class="custom-control-label" for="themeSwitch" id="themeLabel">🌙</label>
-        </div>
+<body class="dark-mode">
+<div class="container">
+  <div class="upload-container">
+    <div class="d-flex justify-content-between mb-3">
+      <h4 class="mb-0">上傳影像檔案</h4>
+      <div class="custom-control custom-switch">
+        <input type="checkbox" class="custom-control-input" id="themeSwitch" checked>
+        <label class="custom-control-label" for="themeSwitch" id="themeLabel">🌙</label>
       </div>
-      <div class="custom-file mb-3">
-        <input type="file" class="custom-file-input" id="file-input" accept="image/*">
-        <label class="custom-file-label" for="file-input">選擇檔案</label>
-      </div>
-      <p>選取的檔案:</p>
-      <div id="file-name">尚未選取檔案</div>
-      <img id="image-preview" src="#" alt="預覽圖像">
-      <div id="image-details" style="display: none;"></div>
-      <button id="upload-button" class="btn btn-primary btn-block" disabled>上傳檔案</button>
     </div>
+
+    <div class="custom-file mb-3">
+      <input type="file" class="custom-file-input" id="file-input" accept="image/*" multiple>
+      <label class="custom-file-label" for="file-input">選擇最多 3 張圖片</label>
+    </div>
+
+    <div id="image-previews"></div>
+
+    <button id="upload-btn" class="btn btn-primary btn-block" disabled>上傳檔案</button>
   </div>
+</div>
 
-  <!-- 載入 jQuery 與 Bootstrap JS -->
-  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
-  <script>
-    const fileInput = document.getElementById('file-input');
-    const fileNameDisplay = document.getElementById('file-name');
-    const uploadButton = document.getElementById('upload-button');
-    const imagePreview = document.getElementById('image-preview');
-    const imageDetails = document.getElementById('image-details');
-    const themeSwitch = document.getElementById('themeSwitch');
-    const themeLabel = document.getElementById('themeLabel');
+<script>
+const maxFiles = 3;
+const maxSize  = 5 * 1024 * 1024; // 5 MB
+const fileInput   = document.getElementById('file-input');
+const previewsBox = document.getElementById('image-previews');
+const uploadBtn   = document.getElementById('upload-btn');
+const themeSw     = document.getElementById('themeSwitch');
+const themeLabel  = document.getElementById('themeLabel');
 
-    // 預設開啟夜間模式：加入 dark-mode 並設定切換開關為勾選狀態
-    document.body.classList.add('dark-mode');
-    themeSwitch.checked = true;
-    themeLabel.textContent = '🌙'; // 預設顯示月亮
+// 夜／日模式
+themeSw.addEventListener('change', ()=>{
+  document.body.classList.toggle('dark-mode', themeSw.checked);
+  themeLabel.textContent = themeSw.checked ? '🌙' : '🌞';
+});
 
-    themeSwitch.addEventListener('change', function() {
-      document.body.classList.toggle('dark-mode', this.checked);
-      themeLabel.textContent = this.checked ? '🌙' : '🌞'; // 切換月亮與太陽的 emoji
-    });
+// 預覽多圖 + 詳細資訊
+fileInput.addEventListener('change', ()=>{
+  previewsBox.innerHTML=''; uploadBtn.disabled=true;
+  const files = Array.from(fileInput.files).slice(0,maxFiles);
+  let valid = 0;
 
-    function updateImageDetails(file, imgWidth, imgHeight) {
-      const fileSizeKB = (file.size / 1024).toFixed(2);
-      const fileSizeMB = (file.size / (1024 * 1024)).toFixed(2);
-      imageDetails.innerHTML = `
-        <strong>檔案類型：</strong> ${file.type} <br>
-        <strong>檔案大小：</strong> ${fileSizeKB} KB (${fileSizeMB} MB) <br>
-        <strong>影像尺寸：</strong> ${imgWidth} x ${imgHeight} px
-      `;
-      imageDetails.style.display = 'block';
+  files.forEach(file=>{
+    if(file.size>maxSize){
+      alert(`"${file.name}" 超過 5 MB，已跳過！`); return;
     }
+    valid++;
 
-    fileInput.addEventListener('change', function(e) {
-      const file = e.target.files[0];
-      const maxSize = 5 * 1024 * 1024; // 5MB
-      
-      if (file && file.size > maxSize) {
-        alert("檔案大小超過 5MB，不允許上傳！");
-        fileInput.value = "";
-        fileNameDisplay.textContent = "尚未選取檔案";
-        fileInput.nextElementSibling.innerText = "選擇檔案";
-        uploadButton.disabled = true;
-        imagePreview.style.display = 'none';
-        imageDetails.style.display = 'none';
-        return;
-      }
+    // 包裝
+    const wrap = document.createElement('div'); wrap.className='preview-wrap';
 
-      if (file) {
-        fileNameDisplay.textContent = file.name;
-        fileInput.nextElementSibling.innerText = file.name;
-        uploadButton.disabled = false;
-        
-        if (file.type.startsWith('image/')) {
-          const reader = new FileReader();
-          reader.onload = function(event) {
-            imagePreview.src = event.target.result;
-            imagePreview.style.display = 'block';
-            const img = new Image();
-            img.onload = function() {
-              updateImageDetails(file, img.width, img.height);
-            };
-            img.src = event.target.result;
-          };
-          reader.readAsDataURL(file);
-        } else {
-          imagePreview.style.display = 'none';
-          imageDetails.style.display = 'none';
-        }
-      } else {
-        fileNameDisplay.textContent = '尚未選取檔案';
-        fileInput.nextElementSibling.innerText = '選擇檔案';
-        uploadButton.disabled = true;
-        imagePreview.style.display = 'none';
-        imageDetails.style.display = 'none';
-      }
-    });
+    // 縮圖
+    const img = document.createElement('img');
 
-    uploadButton.addEventListener('click', function() {
-      const file = fileInput.files[0];
-      if (!file) {
-        alert("請選擇檔案");
-        return;
-      }
-      const formData = new FormData();
-      formData.append('file', file);
+    // 資訊
+    const info = document.createElement('div'); info.className='preview-info';
 
-      fetch('/upload', {
-        method: 'POST',
-        body: formData,
-      })
-      .then(response => response.json())
-      .then(data => {
-        if (data.success) {
-          alert("檔案上傳成功！");
-        } else {
-          alert("檔案上傳失敗！");
-        }
-      })
-      .catch(error => {
-        console.error("上傳時發生錯誤：", error);
-        alert("上傳時發生錯誤！");
-      });
-    });
-  </script>
+    const reader = new FileReader();
+    reader.onload = e=>{
+      img.src = e.target.result;
+      const tmp = new Image();
+      tmp.onload = ()=>{
+        const kb = (file.size/1024).toFixed(1);
+        const mb = (file.size/1048576).toFixed(2);
+        info.innerHTML = `
+          <strong>${file.name}</strong><br>
+          ${kb} KB (${mb} MB)<br>
+          ${tmp.width}×${tmp.height}px`;
+      };
+      tmp.src = e.target.result;
+    };
+    reader.readAsDataURL(file);
+
+    wrap.appendChild(img); wrap.appendChild(info);
+    previewsBox.appendChild(wrap);
+  });
+
+  uploadBtn.disabled = valid===0;
+});
+
+// 上傳
+uploadBtn.addEventListener('click', ()=>{
+  const files = Array.from(fileInput.files)
+                      .slice(0,maxFiles)
+                      .filter(f=>f.size<=maxSize);
+  if(!files.length){alert('沒有可上傳的檔案');return;}
+
+  const fd = new FormData();
+  files.forEach(f=>fd.append('files[]', f));
+
+  fetch('/upload',{method:'POST',body:fd})
+    .then(r=>r.json())
+    .then(d=>alert(d.success?'檔案上傳成功！':'檔案上傳失敗！'))
+    .catch(()=>alert('上傳錯誤'));
+});
+</script>
 </body>
 </html>
