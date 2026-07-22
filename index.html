@@ -1,0 +1,294 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Wade cJ"
+    />
+    <meta name="theme-color" content="#000000" />
+    <title>Wade cJ — Computer Vision Researcher</title>
+    <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="styles.css" />
+    <script src="assets/portrait-edge-points.js" defer></script>
+    <script src="script.js" defer></script>
+  </head>
+  <body>
+    <a class="skip-link" href="#content">Skip to content</a>
+    <div class="cursor-glow" aria-hidden="true"></div>
+
+    <header class="site-header" aria-label="Primary navigation">
+      <a class="monogram pressable" href="#top" aria-label="Wade cJ, home">
+        <span>W</span><i></i><span>CJ</span>
+      </a>
+      <nav>
+        <a href="#work">Work</a>
+        <a href="#systems">Systems</a>
+        <a href="#connect">Connect</a>
+      </nav>
+      <span class="header-index">TPE <span id="local-time">--:--</span></span>
+    </header>
+
+    <main id="content" class="page-shell">
+      <section id="top" class="bento-card hero-card reveal" aria-labelledby="hero-title">
+        <div class="card-chrome" aria-hidden="true">
+          <span>IDENTITY // 001</span>
+          <span>34.98°N — 135.75°E</span>
+        </div>
+
+        <div class="hero-copy">
+          <div class="status-badge">
+            <span class="status-loader" aria-hidden="true"> > > > > > > </span>
+            <span>Computer vision & AI developer + researcher, attending CVCS 2026</span>
+          </div>
+          <p class="eyebrow"></p>
+          <h1 id="hero-title">WADE<br /><span>CJ</span></h1>
+          <p class="hero-tagline">
+            I build stuffs that see between frames—specializing in
+            <strong>spiking neural networks</strong>, <strong>event-based vision</strong>,
+            and custom low-level architectures.
+          </p>
+          <div class="hero-actions">
+            <a class="capsule-button pressable" href="#work">
+              Explore selected work
+              <span aria-hidden="true">↓</span>
+            </a>
+          </div>
+        </div>
+
+        <div class="hero-instrument" aria-label="Live event stream visualization">
+          <div class="instrument-head">
+            <span>EVENT FEED</span>
+            <span class="live-readout">12.8 MEPS</span>
+          </div>
+          <div class="event-field" aria-hidden="true">
+            <canvas id="event-canvas"></canvas>
+            <div class="reticle reticle-a"></div>
+            <div class="reticle reticle-b"></div>
+            <span class="axis axis-x">X 0842</span>
+            <span class="axis axis-y">Y 0196</span>
+          </div>
+          <div class="instrument-foot">
+            <span>POLARITY <i class="positive"></i> + <i class="negative"></i> −</span>
+            <span>Δt 0.001 ms</span>
+          </div>
+        </div>
+
+        <div class="hero-meta" aria-label="Areas of focus">
+          <span>EVENT VISION</span>
+          <span>SPARSE COMPUTE</span>
+          <span>NEURAL ARCHITECTURE</span>
+          <span>GPU SYSTEMS</span>
+        </div>
+      </section>
+
+      <section id="work" class="section-intro reveal" aria-labelledby="work-heading">
+        <div>
+          <span class="section-number">01</span>
+          <p class="eyebrow">Selected work</p>
+        </div>
+        <h2 id="work-heading">Research that moves<br />at sensor speed.</h2>
+        <p>
+          From asynchronous perception to terminal-native rendering—built close to
+          the signal, without hiding behind abstractions.
+        </p>
+      </section>
+
+      <article class="bento-card publication-card reveal" aria-labelledby="evformer-title">
+        <div class="card-chrome">
+          <span>FEATURED RESEARCH // 002</span>
+          <span>2026</span>
+        </div>
+        <div class="project-heading">
+          <div>
+            <span class="project-kind"><i></i> Accepted paper · CVCS 2026</span>
+            <h2 id="evformer-title">EVFORMER</h2>
+          </div>
+          <span class="project-code">PAPER_01<br />STATUS / ACCEPTED</span>
+        </div>
+        <p class="project-lede">
+          Sparse-Aware Event Transformer with Temporal Overlap Voxelization for
+          Dense Semantic Segmentation.
+        </p>
+
+        <figure class="video-shell">
+          <video autoplay loop muted playsinline preload="metadata">
+            <source src="elements/chronospike_web.mp4" type="video/mp4" />
+            Your browser does not support embedded video.
+          </video>
+          <figcaption>
+            <span><i class="signal-dot"></i> LIVE INFERENCE</span>
+            <span>EVENTS / GROUND TRUTH / PREDICTION</span>
+          </figcaption>
+        </figure>
+
+        <div class="spec-strip">
+          <div>
+            <span>01 / INPUT</span>
+            <p>Asynchronous event streams</p>
+          </div>
+          <div>
+            <span>02 / CORE</span>
+            <p>Temporal overlap voxelization</p>
+          </div>
+          <div>
+            <span>03 / TASK</span>
+            <p>Dense semantic segmentation</p>
+          </div>
+          <div>
+            <span>04 / METHOD</span>
+            <p>Sparse-aware attention</p>
+          </div>
+        </div>
+      </article>
+
+      <article class="bento-card terminal-card reveal" aria-labelledby="term-title">
+        <div class="terminal-copy">
+          <div class="card-chrome">
+            <span>OPEN SOURCE // 003</span>
+            <span>PUBLIC REPOSITORY</span>
+          </div>
+          <span class="project-kind"><i></i> Terminal rendering engine</span>
+          <h2 id="term-title">TERM<wbr />RENDER3D</h2>
+          <p class="project-lede">
+            A high-performance renderer for images, video, cameras and 3D geometry—directly
+            inside terminal buffers through ASCII, Unicode Braille and ANSI TrueColor.
+          </p>
+          <div class="stack-list" aria-label="Technology tags">
+            <span>RASTERIZATION</span><span>CUDA</span><span>ANSI</span><span>3D GEOMETRY</span>
+          </div>
+          <a
+            class="capsule-button capsule-light pressable"
+            href="https://github.com/koji05303/termrender3d"
+            target="_blank"
+            rel="noreferrer"
+          >
+            View repository <span aria-hidden="true">↗</span>
+          </a>
+        </div>
+
+        <div class="terminal-window" data-terminal-carousel aria-label="TermRender output preview">
+          <div class="terminal-topbar">
+            <span><i></i><i></i><i></i></span>
+            <span>WADE@VISION: ~/TERMRENDER3D/<span data-terminal-path>BUFFER</span></span>
+            <span data-terminal-count>01 / 07</span>
+          </div>
+
+          <div class="terminal-stage">
+            <figure class="terminal-slide terminal-code-slide is-active" data-path="BUFFER" data-command="braille --color --fps 24">
+              <pre aria-hidden="true"><code><span class="dim">$</span> python termrender.py video input.mp4 \
+  --mode braille --color --fps 24
+
+<span class="red">⣿⣿⣿⣿⣷⣄</span>      <span class="bright">⣀⣤⣶⣿⣿⣿⣿</span>
+<span class="red">⣿⡿⠛⠻⣿⣿⣦</span>  <span class="bright">⣠⣿⣿⡿⠛⠉⠉</span>
+<span class="red">⣿⡇  ⠈⢿⣿⣿</span><span class="bright">⣿⣿⣿⠋  ⣀⣀</span>
+<span class="red">⣿⣧⡀  ⠈⣿⣿</span><span class="bright">⣿⣿⡇  ⣾⣿⣿</span>
+<span class="red">⠹⣿⣿⣶⣾⣿⡿</span><span class="bright">⢿⣿⣿⣦⣀⣿⣿</span>
+  <span class="red">⠉⠛⠛⠛⠉</span>    <span class="bright">⠙⠻⠿⠿⠛⠁</span>
+
+<span class="dim">FRAME</span> 0842  <span class="dim">FPS</span> 24.0  <span class="dim">GPU</span> ON
+<span class="red">▋</span></code></pre>
+            </figure>
+            <figure class="terminal-slide" data-path="AGERA.GIF" data-command="video agera.gif --mode braille --color">
+              <img src="assets/termrender/agera.gif" alt="Animated ASCII rendering of a Koenigsegg Agera" loading="lazy" />
+            </figure>
+            <figure class="terminal-slide" data-path="SKULL.GIF" data-command="video skull.gif --mode braille --color">
+              <img src="assets/termrender/skull.gif" alt="Animated green ASCII skull rendering" loading="lazy" />
+            </figure>
+            <figure class="terminal-slide" data-path="TEST-1.PNG" data-command="image test-1.png --mode braille --color">
+              <img src="assets/termrender/test-1.png" alt="Color Braille portrait rendered by TermRender" loading="lazy" />
+            </figure>
+            <figure class="terminal-slide" data-path="TEST-2.PNG" data-command="image test-2.png --mode braille --color">
+              <img src="assets/termrender/test-2.png" alt="Color Braille character portrait rendered by TermRender" loading="lazy" />
+            </figure>
+            <figure class="terminal-slide" data-path="CHAD.PNG" data-command="image chad.png --mode braille --color">
+              <img src="assets/termrender/chad.png" alt="Color Braille portrait rendered by TermRender" loading="lazy" />
+            </figure>
+          </div>
+
+          <div class="terminal-commandbar">
+            <span><i aria-hidden="true">$</i> termrender.py <span data-terminal-command>braille --color --fps 24</span></span>
+            <div class="terminal-pagination" aria-hidden="true">
+              <i class="is-active"></i><i></i><i></i><i></i><i></i><i></i><i></i>
+            </div>
+            <div class="terminal-nav">
+              <button class="pressable" type="button" data-terminal-prev aria-label="Previous terminal output">←</button>
+              <button class="pressable" type="button" data-terminal-next aria-label="Next terminal output">→</button>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <section id="systems" class="bento-card systems-card reveal" aria-labelledby="systems-title">
+        <div class="card-chrome">
+          <span>CORE ENGINE // 004</span>
+          <span>CAPABILITY MATRIX</span>
+        </div>
+        <div class="systems-heading">
+          <div>
+            <p class="eyebrow">System specifications</p>
+            <h2 id="systems-title">UNDER THE<br />ABSTRACTION.</h2>
+          </div>
+          <p>
+            Focused on the computational substrate: custom operators, memory-aware
+            pipelines, sparse representations, and real-time deployment.
+          </p>
+        </div>
+
+        <div class="matrix-grid">
+          <article class="matrix-item">
+            <span class="matrix-index">01</span>
+            <h3>Parallel Computing<br />&amp; CUDA</h3>
+            <p>Custom CUDA kernels · TensorRT optimization · GPU memory management · parallel acceleration</p>
+            <div class="meter"><i style="--meter: 92%"></i></div>
+          </article>
+          <article class="matrix-item">
+            <span class="matrix-index">02</span>
+            <h3>Neural<br />Architectures</h3>
+            <p>Spiking neural networks · Vision Transformers · sparse event processing · custom layers</p>
+            <div class="meter"><i style="--meter: 96%"></i></div>
+          </article>
+          <article class="matrix-item">
+            <span class="matrix-index">03</span>
+            <h3>Systems &amp;<br />Programming</h3>
+            <p>C++17/20 · modern Python · Linux systems · real-time inference · embedded edge deployment</p>
+            <div class="meter"><i style="--meter: 88%"></i></div>
+          </article>
+          <article class="matrix-item">
+            <span class="matrix-index">04</span>
+            <h3>Computer<br />Vision</h3>
+            <p>Dense segmentation · event sensors · 3D geometry · software rasterization · temporal modeling</p>
+            <div class="meter"><i style="--meter: 94%"></i></div>
+          </article>
+        </div>
+      </section>
+
+      <footer id="connect" class="bento-card footer-card reveal">
+        <div class="footer-signal" aria-hidden="true">
+          <span>●</span><span>●</span><span>●</span><span>●</span><span>●</span>
+        </div>
+        <p class="eyebrow">Have a difficult vision problem?</p>
+        <h2>LET'S BUILD WHAT<br /><span>SEES NEXT.</span></h2>
+        <div class="connect-links">
+          <a class="capsule-button capsule-light pressable" href="mailto:face11142@gmail.com">
+            Email Wade <span aria-hidden="true">↗</span>
+          </a>
+          <a
+            class="capsule-button capsule-outline pressable"
+            href="https://github.com/koji05303"
+            target="_blank"
+            rel="noreferrer"
+          >
+            GitHub / @koji05303 <span aria-hidden="true">↗</span>
+          </a>
+        </div>
+        <div class="footer-meta">
+          <span>HAND-CRAFTED WITH VANILLA JS + PURE CSS</span>
+          <span>NO FRAMEWORKS // ZERO RUNTIME DEPENDENCIES</span>
+          <span>© <span id="year">2026</span> WADE CJ</span>
+        </div>
+      </footer>
+    </main>
+  </body>
+</html>
