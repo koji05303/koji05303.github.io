@@ -856,6 +856,17 @@ a {
   transition-delay: 0s;
 }
 
+.terminal-bronco-slide {
+  place-items: center;
+}
+
+.dot-bronco-svg {
+  width: min(88%, 780px);
+  height: 88%;
+  display: block;
+  filter: drop-shadow(0 0 18px rgba(255, 46, 0, 0.08));
+}
+
 .terminal-slide img {
   width: 100%;
   height: 100%;
