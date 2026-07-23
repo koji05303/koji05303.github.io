@@ -58,7 +58,7 @@
   --red: #ff2e00;
   --radius: 24px;
   --display: "Ndot 55", ui-monospace, monospace;
-  --body: "NType 82", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --body: "Lettera Mono LL", "SFMono-Regular", Consolas, monospace;
   --mono: "Lettera Mono LL", "SFMono-Regular", Consolas, monospace;
 }
 
@@ -638,7 +638,7 @@ a {
 .video-shell {
   position: relative;
   width: 100%;
-  aspect-ratio: 4 / 1;
+  aspect-ratio: 4.36 / 1;
   margin: 0;
   border: 1px solid var(--line);
   border-radius: 16px;
@@ -661,6 +661,7 @@ a {
   height: 100%;
   display: block;
   object-fit: cover;
+  object-position: center bottom;
 }
 
 .video-shell figcaption {
@@ -1135,6 +1136,10 @@ a {
     padding-top: 88px;
   }
 
+  .hero-copy {
+    padding-bottom: 3rem;
+  }
+
   .project-heading {
     margin-top: 1.5rem;
   }
@@ -1148,7 +1153,7 @@ a {
   }
 
   .publication-card .video-shell {
-    height: min(36vh, calc((100vw - 56px) / 4));
+    height: min(36vh, calc((100vw - 56px) / 4.278));
     aspect-ratio: auto;
   }
 
@@ -1262,10 +1267,10 @@ a {
   .project-lede { margin-bottom: 2rem; }
 
   .video-shell {
-    aspect-ratio: 4 / 1;
+    aspect-ratio: 4.278 / 1;
   }
 
-  .video-shell video { object-fit: contain; }
+  .video-shell video { object-fit: cover; }
 
   .video-shell figcaption span:last-child { display: none; }
 

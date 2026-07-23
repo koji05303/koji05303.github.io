@@ -7,7 +7,7 @@ function createAmbientDots() {
   const context = canvas.getContext("2d");
   const spacing = 64;
   const radius = 1.5;
-  const pulseDuration = 2150;
+  const pulseDuration = 1430;
   let width = 0;
   let height = 0;
   let dots = [];
@@ -125,6 +125,9 @@ updateClock();
 window.setInterval(updateClock, 30_000);
 
 const activeScrambles = new WeakMap();
+const heldScrambles = new WeakMap();
+const heldScrambleBlocks = new Set();
+const originalScrambleText = new WeakMap();
 const uppercaseGlyphs = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 const lowercaseGlyphs = "abcdefghijklmnopqrstuvwxyz";
 const numberGlyphs = "0123456789";
@@ -159,35 +162,80 @@ function getScrambleNodes(block) {
   return nodes;
 }
 
-function restoreScramble(block) {
-  const active = activeScrambles.get(block);
-  if (!active) return;
-  cancelAnimationFrame(active.frame);
-  active.entries.forEach(({ node, original }) => {
-    node.nodeValue = original;
-  });
-  activeScrambles.delete(block);
-}
-
-function scrambleBlock(block) {
-  if (reducedMotion.matches) return;
-  restoreScramble(block);
-
-  const entries = getScrambleNodes(block).map((node) => {
-    const original = node.nodeValue;
+function getScrambleEntries(block) {
+  return getScrambleNodes(block).map((node) => {
+    if (!originalScrambleText.has(node)) {
+      originalScrambleText.set(node, node.nodeValue);
+    }
+    const original = originalScrambleText.get(node);
     return {
       node,
       original,
       characters: Array.from(original),
-      revealAt: Array.from(original, (character) => (
-        /[A-Za-z0-9]/.test(character) ? 0.28 + Math.random() * 0.62 : 0
-      )),
     };
   });
+}
+
+function refreshHeldScramble(block, force = false) {
+  const held = heldScrambles.get(block);
+  if (!held) return;
+  const now = performance.now();
+  if (!force && now - held.previousTick < 32) return;
+  held.previousTick = now;
+  held.entries.forEach(({ node, characters }) => {
+    node.nodeValue = characters.map(randomGlyph).join("");
+  });
+}
+
+function holdScramble(block) {
+  if (reducedMotion.matches) return;
+  const active = activeScrambles.get(block);
+  if (active) {
+    cancelAnimationFrame(active.frame);
+    activeScrambles.delete(block);
+  }
+
+  if (!heldScrambles.has(block)) {
+    const entries = active?.entries || getScrambleEntries(block);
+    if (!entries.length) return;
+    heldScrambles.set(block, { entries, previousTick: 0 });
+    heldScrambleBlocks.add(block);
+  }
+  refreshHeldScramble(block, true);
+}
+
+function restoreScramble(block) {
+  const active = activeScrambles.get(block);
+  const held = heldScrambles.get(block);
+  if (!active && !held) return;
+  if (active) cancelAnimationFrame(active.frame);
+  const entries = active?.entries || held.entries;
+  entries.forEach(({ node, original }) => {
+    node.nodeValue = original;
+  });
+  activeScrambles.delete(block);
+  heldScrambles.delete(block);
+  heldScrambleBlocks.delete(block);
+}
+
+function scrambleBlock(block) {
+  if (reducedMotion.matches) return;
+  const previousActive = activeScrambles.get(block);
+  if (previousActive) cancelAnimationFrame(previousActive.frame);
+  const held = heldScrambles.get(block);
+  const entries = (held?.entries || previousActive?.entries || getScrambleEntries(block))
+    .map((entry) => ({
+      ...entry,
+      revealAt: Array.from(entry.original, (character) => (
+        /[A-Za-z0-9]/.test(character) ? 0.28 + Math.random() * 0.62 : 0
+      )),
+    }));
   if (!entries.length) return;
+  heldScrambles.delete(block);
+  heldScrambleBlocks.delete(block);
 
   const startedAt = performance.now();
-  const duration = 700;
+  const duration = 180;
   let previousTick = 0;
   const active = { entries, frame: 0 };
   activeScrambles.set(block, active);
@@ -220,23 +268,71 @@ function scrambleBlock(block) {
   active.frame = requestAnimationFrame(animate);
 }
 
+window.setInterval(() => {
+  heldScrambleBlocks.forEach((block) => refreshHeldScramble(block));
+}, 45);
+
+const revealBlocks = [...document.querySelectorAll(".reveal")];
+let scrambleSettleTimer;
+let settledScrambleBlock = null;
+
+function getNearestRevealBlock() {
+  return revealBlocks.reduce((nearest, block) => {
+    if (!nearest) return block;
+    return Math.abs(block.getBoundingClientRect().top)
+      < Math.abs(nearest.getBoundingClientRect().top)
+      ? block
+      : nearest;
+  }, null);
+}
+
+function scheduleSettledScramble(delay = 25) {
+  window.clearTimeout(scrambleSettleTimer);
+  scrambleSettleTimer = window.setTimeout(() => {
+    const block = getNearestRevealBlock();
+    if (!block || !block.classList.contains("in-view")) return;
+    if (block === settledScrambleBlock) return;
+    settledScrambleBlock = block;
+    scrambleBlock(block);
+  }, delay);
+}
+
 const revealObserver = new IntersectionObserver(
   (entries) => {
     entries.forEach((entry) => {
       if (entry.isIntersecting) {
         const wasInView = entry.target.classList.contains("in-view");
+        if (!wasInView) holdScramble(entry.target);
         entry.target.classList.add("in-view");
-        if (!wasInView) scrambleBlock(entry.target);
+        if (!wasInView) scheduleSettledScramble();
       } else {
         entry.target.classList.remove("in-view");
         restoreScramble(entry.target);
+        if (entry.target === settledScrambleBlock) settledScrambleBlock = null;
       }
     });
   },
   { rootMargin: "-14% 0px -14%", threshold: 0.12 },
 );
 
-document.querySelectorAll(".reveal").forEach((element) => revealObserver.observe(element));
+revealBlocks.forEach((element) => revealObserver.observe(element));
+
+window.addEventListener("scroll", () => {
+  const interruptedBlock = settledScrambleBlock
+    && activeScrambles.has(settledScrambleBlock)
+    ? settledScrambleBlock
+    : null;
+  if (interruptedBlock) {
+    holdScramble(interruptedBlock);
+    settledScrambleBlock = null;
+  }
+  revealBlocks.forEach((block) => refreshHeldScramble(block));
+  scheduleSettledScramble();
+}, { passive: true });
+
+window.addEventListener("scrollend", () => {
+  scheduleSettledScramble();
+}, { passive: true });
 
 window.addEventListener(
   "pointermove",
