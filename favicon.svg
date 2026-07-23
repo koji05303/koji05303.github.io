@@ -1,5 +1,16 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
-  <rect width="64" height="64" rx="14" fill="#050505"/>
-  <circle cx="17" cy="17" r="5" fill="#ff2e00"/>
-  <path fill="#f5f5f3" d="M14 29h7l4 19h4l3-13h6l3 13h4l4-19h7l-7 25H37l-2-10-2 10H21z"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32">
+  <rect width="32" height="32" rx="7" fill="#0D0D0D"/>
+  
+  <!-- 四角括號點 -->
+  <circle cx="8" cy="8" r="2" fill="#FFFFFF" opacity="0.6"/>
+  <circle cx="24" cy="8" r="2" fill="#FFFFFF" opacity="0.6"/>
+  <circle cx="8" cy="24" r="2" fill="#FFFFFF" opacity="0.6"/>
+  <circle cx="24" cy="24" r="2" fill="#FFFFFF" opacity="0.6"/>
+  
+  <!-- 十字中心 -->
+  <circle cx="16" cy="10" r="2" fill="#FFFFFF"/>
+  <circle cx="10" cy="16" r="2" fill="#FFFFFF"/>
+  <circle cx="16" cy="16" r="3" fill="#FF2E00"/> <!-- 中央 Event 觸發點 -->
+  <circle cx="22" cy="16" r="2" fill="#FFFFFF"/>
+  <circle cx="16" cy="22" r="2" fill="#FFFFFF"/>
 </svg>
