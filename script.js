@@ -2,6 +2,115 @@ const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
 
 document.getElementById("year").textContent = new Date().getFullYear();
 
+function createAmbientDots() {
+  const canvas = document.getElementById("ambient-dots");
+  const context = canvas.getContext("2d");
+  const spacing = 64;
+  const radius = 1.5;
+  const pulseDuration = 3200;
+  let width = 0;
+  let height = 0;
+  let dots = [];
+  let pulses = [];
+  let frame;
+
+  const randomAlpha = () => 0.035 + Math.random() * 0.22;
+
+  function resize() {
+    const ratio = Math.min(window.devicePixelRatio || 1, 2);
+    width = window.innerWidth;
+    height = window.innerHeight;
+    canvas.width = Math.round(width * ratio);
+    canvas.height = Math.round(height * ratio);
+    context.setTransform(ratio, 0, 0, ratio, 0, 0);
+
+    const now = performance.now();
+    dots = [];
+    for (let y = 32; y < height + spacing; y += spacing) {
+      for (let x = 32; x < width + spacing; x += spacing) {
+        const alpha = randomAlpha();
+        dots.push({
+          x,
+          y,
+          from: alpha,
+          to: randomAlpha(),
+          startedAt: now - Math.random() * 1800,
+          duration: 900 + Math.random() * 2400,
+        });
+      }
+    }
+  }
+
+  function draw(now) {
+    context.clearRect(0, 0, width, height);
+    pulses = pulses.filter((pulse) => now - pulse.startedAt < pulseDuration);
+
+    dots.forEach((dot) => {
+      let progress = Math.min(1, (now - dot.startedAt) / dot.duration);
+      if (progress >= 1) {
+        dot.from = dot.to;
+        dot.to = randomAlpha();
+        dot.startedAt = now;
+        dot.duration = 900 + Math.random() * 2400;
+        progress = 0;
+      }
+
+      const eased = 0.5 - Math.cos(progress * Math.PI) / 2;
+      let alpha = reducedMotion.matches
+        ? 0.15
+        : dot.from + (dot.to - dot.from) * eased;
+
+      pulses.forEach((pulse) => {
+        const pulseProgress = Math.min(1, (now - pulse.startedAt) / pulseDuration);
+        const waveRadius = pulseProgress * pulse.maximumRadius;
+        const distance = Math.hypot(dot.x - pulse.x, dot.y - pulse.y);
+        const ringDistance = Math.abs(distance - waveRadius);
+        const ring = Math.exp(-Math.pow(ringDistance / 52, 2));
+        const trail = distance < waveRadius
+          ? Math.exp(-(waveRadius - distance) / 150) * 0.2
+          : 0;
+        const fadeProgress = Math.max(0, (pulseProgress - 0.72) / 0.28);
+        const envelope = 1 - fadeProgress * fadeProgress * (3 - 2 * fadeProgress);
+        alpha += (ring * 0.72 + trail) * envelope;
+      });
+
+      context.beginPath();
+      context.arc(dot.x, dot.y, radius, 0, Math.PI * 2);
+      context.fillStyle = `rgba(255, 255, 255, ${Math.min(alpha, 0.92)})`;
+      context.fill();
+    });
+
+    if (!reducedMotion.matches) frame = requestAnimationFrame(draw);
+  }
+
+  resize();
+  draw(performance.now());
+  window.addEventListener("resize", resize, { passive: true });
+  window.addEventListener("pointerdown", (event) => {
+    if (reducedMotion.matches || event.button > 0) return;
+    const x = event.clientX;
+    const y = event.clientY;
+    pulses.push({
+      x,
+      y,
+      startedAt: performance.now(),
+      maximumRadius: Math.max(
+        Math.hypot(x, y),
+        Math.hypot(width - x, y),
+        Math.hypot(x, height - y),
+        Math.hypot(width - x, height - y),
+      ),
+    });
+    if (pulses.length > 4) pulses.shift();
+  }, { passive: true });
+  reducedMotion.addEventListener?.("change", () => {
+    cancelAnimationFrame(frame);
+    draw(performance.now());
+  });
+}
+
+createAmbientDots();
+
 function updateClock() {
   const time = new Intl.DateTimeFormat("en-GB", {
     timeZone: "Asia/Taipei",
