@@ -7,7 +7,7 @@ function createAmbientDots() {
   const context = canvas.getContext("2d");
   const spacing = 64;
   const radius = 1.5;
-  const pulseDuration = 3200;
+  const pulseDuration = 2150;
   let width = 0;
   let height = 0;
   let dots = [];
@@ -124,13 +124,112 @@ function updateClock() {
 updateClock();
 window.setInterval(updateClock, 30_000);
 
+const activeScrambles = new WeakMap();
+const uppercaseGlyphs = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+const lowercaseGlyphs = "abcdefghijklmnopqrstuvwxyz";
+const numberGlyphs = "0123456789";
+
+function randomGlyph(character) {
+  if (/[A-Z]/.test(character)) {
+    return uppercaseGlyphs[Math.floor(Math.random() * uppercaseGlyphs.length)];
+  }
+  if (/[a-z]/.test(character)) {
+    return lowercaseGlyphs[Math.floor(Math.random() * lowercaseGlyphs.length)];
+  }
+  if (/[0-9]/.test(character)) {
+    return numberGlyphs[Math.floor(Math.random() * numberGlyphs.length)];
+  }
+  return character;
+}
+
+function getScrambleNodes(block) {
+  const walker = document.createTreeWalker(block, NodeFilter.SHOW_TEXT, {
+    acceptNode(node) {
+      if (!node.nodeValue.trim()) return NodeFilter.FILTER_REJECT;
+      const parent = node.parentElement;
+      if (!parent) return NodeFilter.FILTER_REJECT;
+      if (parent.closest("[hidden], .terminal-window, .video-shell")) {
+        return NodeFilter.FILTER_REJECT;
+      }
+      return NodeFilter.FILTER_ACCEPT;
+    },
+  });
+  const nodes = [];
+  while (walker.nextNode()) nodes.push(walker.currentNode);
+  return nodes;
+}
+
+function restoreScramble(block) {
+  const active = activeScrambles.get(block);
+  if (!active) return;
+  cancelAnimationFrame(active.frame);
+  active.entries.forEach(({ node, original }) => {
+    node.nodeValue = original;
+  });
+  activeScrambles.delete(block);
+}
+
+function scrambleBlock(block) {
+  if (reducedMotion.matches) return;
+  restoreScramble(block);
+
+  const entries = getScrambleNodes(block).map((node) => {
+    const original = node.nodeValue;
+    return {
+      node,
+      original,
+      characters: Array.from(original),
+      revealAt: Array.from(original, (character) => (
+        /[A-Za-z0-9]/.test(character) ? 0.28 + Math.random() * 0.62 : 0
+      )),
+    };
+  });
+  if (!entries.length) return;
+
+  const startedAt = performance.now();
+  const duration = 700;
+  let previousTick = 0;
+  const active = { entries, frame: 0 };
+  activeScrambles.set(block, active);
+
+  function animate(now) {
+    const progress = Math.min(1, (now - startedAt) / duration);
+
+    if (now - previousTick >= 32 || progress >= 1) {
+      previousTick = now;
+      entries.forEach(({ node, original, characters, revealAt }) => {
+        if (progress >= 1) {
+          node.nodeValue = original;
+          return;
+        }
+        node.nodeValue = characters
+          .map((character, index) => (
+            progress >= revealAt[index] ? character : randomGlyph(character)
+          ))
+          .join("");
+      });
+    }
+
+    if (progress < 1) {
+      active.frame = requestAnimationFrame(animate);
+    } else {
+      activeScrambles.delete(block);
+    }
+  }
+
+  active.frame = requestAnimationFrame(animate);
+}
+
 const revealObserver = new IntersectionObserver(
   (entries) => {
     entries.forEach((entry) => {
       if (entry.isIntersecting) {
+        const wasInView = entry.target.classList.contains("in-view");
         entry.target.classList.add("in-view");
+        if (!wasInView) scrambleBlock(entry.target);
       } else {
         entry.target.classList.remove("in-view");
+        restoreScramble(entry.target);
       }
     });
   },
