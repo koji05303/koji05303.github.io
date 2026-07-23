@@ -104,6 +104,7 @@ document.querySelectorAll(".pressable").forEach((element) => {
 
 function createEventPortrait() {
   const canvas = document.getElementById("event-canvas");
+  if (!canvas || canvas.closest("[hidden]")) return;
   const context = canvas.getContext("2d");
   const field = canvas.parentElement;
   const sourcePoints = (window.PORTRAIT_EDGE_POINTS || []).map(([x, y, strength]) => ({ x, y, strength }));

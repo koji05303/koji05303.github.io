@@ -78,9 +78,9 @@ body {
   position: relative;
   isolation: isolate;
   background-color: var(--bg);
-  background-image: radial-gradient(circle, rgba(255, 255, 255, 0.15) 0.7px, transparent 0.85px);
+  background-image: radial-gradient(circle, rgba(255, 255, 255, 0.15) 1px, transparent 1.15px);
   background-position: 14px 14px;
-  background-size: 28px 28px;
+  background-size: 64px 64px;
   background-attachment: fixed;
   color: var(--text);
   font-family: var(--body);
@@ -250,8 +250,7 @@ a {
   min-height: 100svh;
   padding: 112px 28px 28px;
   display: grid;
-  grid-template: auto 1fr auto / minmax(0, 1.15fr) minmax(360px, 0.85fr);
-  column-gap: clamp(2rem, 5vw, 7rem);
+  grid-template: auto 1fr auto / minmax(0, 1fr);
 }
 
 .hero-card::after {
@@ -339,7 +338,7 @@ a {
 .hero-copy h1 {
   margin: 0;
   font-family: var(--display);
-  font-size: clamp(5rem, 11.5vw, 11rem);
+  font-size: clamp(5.5rem, 12.8vw, 12.5rem);
   font-weight: 400;
   letter-spacing: 0.025em;
   line-height: 0.75;
@@ -1220,8 +1219,8 @@ a {
     grid-template-columns: 1fr auto;
   }
 
-  .site-header nav { gap: 1rem; }
-  .site-header nav a:nth-child(2),
+  .site-header nav { gap: clamp(.55rem, 3vw, .85rem); }
+  .site-header nav a { font-size: clamp(.54rem, 2.5vw, .64rem); }
   .header-index { display: none; }
 
   .page-shell { gap: 0; }
@@ -1232,7 +1231,7 @@ a {
   .card-chrome { font-size: .51rem; }
   .card-chrome span:last-child { display: none; }
   .hero-copy { padding: 4.5rem 0 2.5rem; }
-  .hero-copy h1 { font-size: clamp(4.5rem, 26vw, 7rem); }
+  .hero-copy h1 { font-size: clamp(4.9rem, 29vw, 7.8rem); }
   .hero-tagline { line-height: 1.6; }
   .hero-instrument { height: 330px; }
 
@@ -1258,8 +1257,10 @@ a {
   .project-lede { margin-bottom: 2rem; }
 
   .video-shell {
-    aspect-ratio: 16 / 8;
+    aspect-ratio: 4 / 1;
   }
+
+  .video-shell video { object-fit: contain; }
 
   .video-shell figcaption span:last-child { display: none; }
 
